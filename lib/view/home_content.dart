@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:satu_digital/view/artikel/artikel_page.dart';
 
 class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
@@ -126,7 +127,12 @@ class HomeContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ArtikelPage()),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.teal,
@@ -145,7 +151,7 @@ class HomeContent extends StatelessWidget {
   }
 }
 
-// 🔹 Widget kategori
+// Widget kategori
 class CategoryCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -186,7 +192,7 @@ class CategoryCard extends StatelessWidget {
   }
 }
 
-// 🔹 Widget produk
+// Widget produk
 class ProductCard extends StatelessWidget {
   const ProductCard({super.key});
 

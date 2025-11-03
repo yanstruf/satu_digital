@@ -34,9 +34,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFEFF8F8),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF007C82),
-        title: const Text('Profil Saya'),
-        centerTitle: true,
+        // backgroundColor: const Color(0xFF007C82),
+        title: const Text(
+          'Profil Saya',
+          style: TextStyle(
+            color: Color(0xFF007C82),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        // centerTitle: true,
         elevation: 0,
       ),
       body: _user == null
@@ -139,6 +145,29 @@ class _ProfilePageState extends State<ProfilePage> {
                         label: const Text('Hapus Akun'),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // 🔹 Tombol Logout
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[800],
+                      minimumSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/login');
+                    },
+                    icon: const Icon(Icons.logout, color: Colors.white),
+                    label: const Text(
+                      'Logout',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),

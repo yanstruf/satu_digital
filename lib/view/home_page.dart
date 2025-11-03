@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:satu_digital/view/chat_page/main_chat.dart';
 import 'package:satu_digital/view/home_content.dart';
+import 'package:satu_digital/view/order_page/order_page.dart';
 import 'package:satu_digital/view/profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,10 +15,11 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    const HomeContent(), // ini isinya persis home_page kamu sebelumnya
-    const Center(child: Text("Chat Page")),
-    const Center(child: Text("Order Page")),
+    const HomeContent(),
+    const ChatPage(),
+    const OrderPage(),
     const ProfilePage(),
+    const Center(child: Text("kosong?")),
   ];
 
   @override

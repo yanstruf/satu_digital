@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:satu_digital/view/chat_page/main_chat.dart';
 import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
 import 'package:satu_digital/view/form_pendaftaran.dart';
 import 'package:satu_digital/view/home_page.dart';
 import 'package:satu_digital/view/login_screen.dart';
-import 'package:satu_digital/view/profile/profile_page.dart';
 import 'package:satu_digital/view/register_berhasil.dart';
 import 'package:satu_digital/view/splash_screeb.dart';
 import 'package:sqflite/sqflite.dart';
@@ -32,9 +32,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF007C82)),
         useMaterial3: true,
       ),
-      // Halaman pertama yang ditampilkan
-      home: const ProfilePage(),
+
+      home: const SplashScreen(),
       routes: {
+        '/chat': (context) => const ChatPage(),
         '/splash': (context) => const SplashScreen(),
         '/daftar': (context) => const FormPendaftaran(),
         '/success': (context) => const SuccessRegister(),

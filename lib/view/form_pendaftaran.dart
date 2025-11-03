@@ -18,7 +18,6 @@ class _FormPendaftaranState extends State<FormPendaftaran> {
   final _emailController = TextEditingController();
   final _noHpController = TextEditingController();
   final _passwordController = TextEditingController();
-
   final _kotaController = TextEditingController();
 
   final db = DbHelper();
@@ -98,7 +97,7 @@ class _FormPendaftaranState extends State<FormPendaftaran> {
     _loadUsers();
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Data berhasil dihapus')));
+    ).showSnackBar(const SnackBar(content: Text('Data berhasil dihapus ')));
   }
 
   @override
