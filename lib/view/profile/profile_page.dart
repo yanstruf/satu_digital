@@ -148,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // 🔹 Tombol Logout
+                  // Tombol Logout
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[800],

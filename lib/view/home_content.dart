@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:satu_digital/view/artikel/artikel_page.dart';
 
 class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
+  HomeContent({super.key});
+
+  final List<Map<String, String>> productList = [
+    {'image': 'assets/images/apple.png'},
+    {'image': 'assets/images/buah.jpg'},
+    {'image': 'assets/images/sayur.jpg'},
+    {'image': 'assets/images/elektronik.jpg'},
+    {'image': 'assets/images/google.png'},
+    {'image': 'assets/images/meme1.jpg'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +20,7 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 🔍 Search Bar
+          // Search Bar
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -20,6 +29,7 @@ class HomeContent extends StatelessWidget {
             child: const TextField(
               decoration: InputDecoration(
                 hintText: "Cari produk atau kebutuhan anda . . .",
+                hintStyle: TextStyle(color: Colors.grey),
                 prefixIcon: Icon(Icons.search),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(14),
@@ -28,66 +38,107 @@ class HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // Kategori
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                "Kategori",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text("Lihat", style: TextStyle(color: Colors.teal)),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const [
-              CategoryCard(
-                icon: Icons.add_box,
-                title: "Posting Produk",
-                subtitle: "Posting Produk",
-              ),
-              CategoryCard(
-                icon: Icons.people_alt,
-                title: "Cari Partner",
-                subtitle: "Jangkauan",
-              ),
-            ],
-          ),
+          // Banner Slider Otomatis
+          const AutoSlideBanner(),
           const SizedBox(height: 20),
 
-          // Produk Unggulan
+          // Bagian Kategori
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: const Text(
+              "Kategori",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Center(
+            child: SizedBox(
+              height: 90, // tinggi area kategori
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    CategoryIcon(
+                      imagePath: 'assets/images/buah.jpg',
+                      title: 'Buah',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ArtikelPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    CategoryIcon(
+                      imagePath: 'assets/images/sayur.jpg',
+                      title: 'Sayur',
+                    ),
+                    // CategoryIcon(
+                    //   imagePath: 'assets/images/beras.jpg',
+                    //   title: 'Beras',
+                    // ),
+                    // CategoryIcon(
+                    //   imagePath: 'assets/images/ikan.jpg',
+                    //   title: 'Ikan',
+                    // ),
+                    //   CategoryIcon(
+                    //     imagePath: 'assets/images/daging.jpg',
+                    //     title: 'Daging',
+                    //   ),
+                    //   CategoryIcon(
+                    //     imagePath: 'assets/images/alat.jpg',
+                    //     title: 'Peralatan',
+                    //   ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Produk
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                "Produk Unggulan",
+            children: [
+              const Text(
+                "Produk",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Text("Lihat semua", style: TextStyle(color: Colors.teal)),
+              GestureDetector(
+                onTap: () {
+                  // TODO: nanti bisa diarahkan ke halaman semua produk
+                  // Navigator.push(context, MaterialPageRoute(builder: (_) => AllProductPage()));
+                },
+                child: const Text(
+                  "Lihat semua",
+                  style: TextStyle(color: Colors.teal),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
 
+          // Grid Produk
           GridView.builder(
-            itemCount: 4,
+            itemCount: productList.length,
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 0.72,
+              childAspectRatio: 0.67,
             ),
             itemBuilder: (context, index) {
-              return const ProductCard();
+              final product = productList[index];
+              return ProductCard(imagePath: product['image']);
             },
           ),
+
           const SizedBox(height: 20),
 
-          // 📰 Berita Terbaru
+          // Berita Terbaru
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -151,7 +202,62 @@ class HomeContent extends StatelessWidget {
   }
 }
 
-// Widget kategori
+// Banner otomatis slide
+class AutoSlideBanner extends StatefulWidget {
+  const AutoSlideBanner({super.key});
+
+  @override
+  State<AutoSlideBanner> createState() => _AutoSlideBannerState();
+}
+
+class _AutoSlideBannerState extends State<AutoSlideBanner> {
+  final PageController _controller = PageController(viewportFraction: 0.9);
+  int _currentPage = 0;
+  final List<String> _images = [
+    'assets/images/buah.jpg',
+    'assets/images/apple.png',
+    'assets/images/google.png',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 3), _autoSlide);
+  }
+
+  void _autoSlide() {
+    if (!mounted) return;
+    _currentPage = (_currentPage + 1) % _images.length;
+    _controller.animateToPage(
+      _currentPage,
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+    );
+    Future.delayed(const Duration(seconds: 3), _autoSlide);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 160,
+      child: PageView.builder(
+        controller: _controller,
+        itemCount: _images.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.asset(_images[index], fit: BoxFit.cover),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Category Card
 class CategoryCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -168,7 +274,7 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 150,
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -192,94 +298,123 @@ class CategoryCard extends StatelessWidget {
   }
 }
 
-// Widget produk
+// Product Card
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  final String? imagePath; // pakai nullable, biar bisa default
+
+  const ProductCard({super.key, this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Gambar Produk
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.blue[300],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
             ),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Container(
-                margin: const EdgeInsets.all(6),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  "Tanaman",
-                  style: TextStyle(color: Colors.white, fontSize: 10),
-                ),
+            child: AspectRatio(
+              aspectRatio: 1, // rasio 1:1 (kotak), bisa ubah jadi 3/2, 4/3, dll
+              child: Image.asset(
+                imagePath!,
+                fit: BoxFit.cover, // isi penuh, tapi bisa sedikit terpotong
               ),
             ),
           ),
 
-          // Deskripsi Produk
+          const SizedBox(height: 12),
+
+          // Info Produk
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  "Bibit beras premium - . .",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  "Nama Produk",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Rp 800.000",
+                  "Rp 0",
                   style: TextStyle(
                     color: Colors.teal,
                     fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
-                ),
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.location_on, size: 14, color: Colors.grey),
-                    SizedBox(width: 4),
-                    Text(
-                      "Jakarta, Indonesia",
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "Pak Budi Farm",
-                  style: TextStyle(color: Colors.black54, fontSize: 12),
-                ),
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.amber, size: 16),
-                    SizedBox(width: 4),
-                    Text("4,9", style: TextStyle(fontSize: 12)),
-                  ],
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CategoryIcon extends StatelessWidget {
+  final String imagePath;
+  final String title;
+  final VoidCallback? onTap;
+
+  const CategoryIcon({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          children: [
+            // Gambar kategori
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                image: DecorationImage(
+                  image: AssetImage(imagePath),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
