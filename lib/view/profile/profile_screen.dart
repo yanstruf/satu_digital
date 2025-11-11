@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:satu_digital/database/db_helper.dart';
 import 'package:satu_digital/model/user_model.dart';
+import 'package:satu_digital/view/login_screen.dart';
 import 'package:satu_digital/view/profile/edit_profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -122,9 +124,16 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                           if (result == true) _loadUser();
                         },
-                        icon: const Icon(Icons.edit),
-                        label: const Text('Edit Profil'),
+                        icon: Icon(Icons.edit, color: Colors.white),
+                        label: Text(
+                          'Edit Profil',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
+
+                      // ==========================
+                      // Tombol Hapus Akun (REVISI)
+                      // ==========================
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.redAccent,
@@ -133,19 +142,68 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         onPressed: () async {
-                          await dbHelper.deleteUser(_user!.id!);
-                          setState(() => _user = null);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Akun berhasil dihapus!'),
+                          // Dialog Konfirmasi
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Konfirmasi Hapus"),
+                              content: const Text(
+                                "Apakah Anda yakin ingin menghapus akun ini? Tindakan ini tidak dapat dibatalkan.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text("Batal"),
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                ),
+                                TextButton(
+                                  child: const Text(
+                                    "Hapus",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                ),
+                              ],
                             ),
                           );
+
+                          if (confirm == true) {
+                            // Hapus user dari database
+                            await dbHelper.deleteUser(_user!.id!);
+
+                            // Set state null sementara agar UI kosong
+                            setState(() => _user = null);
+
+                            // Bersihkan SharedPreferences jika auto login
+                            // (hapus jika tidak pakai sharedpref)
+                            final pref = await SharedPreferences.getInstance();
+                            await pref.clear();
+
+                            // Kembali ke halaman login
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LoginScreen(),
+                              ),
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Akun berhasil dihapus!'),
+                              ),
+                            );
+                          }
                         },
-                        icon: const Icon(Icons.delete),
-                        label: const Text('Hapus Akun'),
+                        icon: Icon(Icons.delete, color: Colors.white),
+                        label: Text(
+                          'Hapus Akun',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 20),
 
                   // Tombol Logout

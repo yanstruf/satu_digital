@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
 import 'package:satu_digital/database/db_helper.dart';
 import 'package:satu_digital/model/user_model.dart';
-import 'package:satu_digital/view/register_berhasil.dart';
+import 'package:satu_digital/view/register_success.dart';
+// import 'package:google_fonts/google_fonts.dart';
 
 class FormPendaftaran extends StatefulWidget {
   const FormPendaftaran({super.key});
@@ -249,7 +249,7 @@ class _FormPendaftaranState extends State<FormPendaftaran> {
             validator ??
             (v) => (v == null || v.isEmpty) ? "$label wajib diisi" : null,
         decoration: InputDecoration(
-          labelText: label,
+          hintText: label,
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(

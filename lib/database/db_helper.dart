@@ -1,7 +1,6 @@
 import 'package:path/path.dart';
 import 'package:satu_digital/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
-// import 'package:path/path.dart';
 
 class DbHelper {
   static Database? _database;
@@ -103,7 +102,7 @@ class DbHelper {
     }
   }
 
-  // 🔧 Tambahan opsional: hapus database (buat reset)
+  // Tambahan opsional: hapus database (buat reset)
   Future<void> deleteDb() async {
     final path = join(await getDatabasesPath(), _dbName);
     await deleteDatabase(path);

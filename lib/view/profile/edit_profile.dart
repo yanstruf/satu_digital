@@ -30,7 +30,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Profil"),
+        title: Text(
+          "Edit Profil",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color(0xFF007C82),
       ),
       body: Padding(
@@ -55,8 +58,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 await dbHelper.updateUser(updatedUser);
                 Navigator.pop(context, true);
               },
-              icon: const Icon(Icons.save),
-              label: const Text("Simpan Perubahan"),
+              icon: Icon(Icons.save, color: Colors.white),
+              label: Text(
+                "Simpan Perubahan",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
                 minimumSize: const Size(double.infinity, 50),

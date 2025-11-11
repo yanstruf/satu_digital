@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:satu_digital/database/db_helper.dart';
 import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
-import 'package:satu_digital/view/form_pendaftaran.dart';
-import 'package:satu_digital/view/home_page.dart';
+import 'package:satu_digital/view/form_register.dart';
+import 'package:satu_digital/view/home_screen.dart';
+import 'package:satu_digital/view/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -202,6 +203,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   final user = await dbHelper.loginUser(email, password);
 
                   if (user != null) {
+                    // ✅ Simpan data login ke SharedPreferences
+                    await SharedPrefService.saveLogin(
+                      user.email,
+                      user.role ?? 'user',
+                    );
+
                     if (user.role == 'admin') {
                       Navigator.pushReplacement(
                         context,

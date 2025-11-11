@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:satu_digital/view/chat_page/main_chat.dart';
+import 'package:satu_digital/view/chat_page/chat_screen.dart';
 import 'package:satu_digital/view/home_content.dart';
-import 'package:satu_digital/view/order_page/order_page.dart';
-import 'package:satu_digital/view/profile/profile_page.dart';
+import 'package:satu_digital/view/order_screen/order_screen.dart';
+import 'package:satu_digital/view/profile/profile_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: const Color(0xFFF3F4F6),
       appBar: AppBar(
         backgroundColor: const Color(0xFF009688),
-        title: const Text(
+        title: Text(
           "Beranda",
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),

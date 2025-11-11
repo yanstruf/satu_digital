@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:satu_digital/view/chat_page/main_chat.dart';
+import 'package:satu_digital/view/chat_page/chat_screen.dart';
 import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
-import 'package:satu_digital/view/form_pendaftaran.dart';
-import 'package:satu_digital/view/home_page.dart';
+import 'package:satu_digital/view/form_register.dart';
+import 'package:satu_digital/view/home_screen.dart';
 import 'package:satu_digital/view/login_screen.dart';
-import 'package:satu_digital/view/register_berhasil.dart';
-import 'package:satu_digital/view/splash_screeb.dart';
+import 'package:satu_digital/view/register_success.dart';
+import 'package:satu_digital/view/splash_screen.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> main() async {

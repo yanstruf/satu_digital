@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:satu_digital/view/artikel/artikel_page.dart';
+import 'package:satu_digital/view/artikel/article_screen.dart';
 
 class HomeContent extends StatelessWidget {
   HomeContent({super.key});
@@ -211,44 +211,83 @@ class AutoSlideBanner extends StatefulWidget {
 }
 
 class _AutoSlideBannerState extends State<AutoSlideBanner> {
-  final PageController _controller = PageController(viewportFraction: 0.9);
+  late final PageController _controller;
   int _currentPage = 0;
+
   final List<String> _images = [
-    'assets/images/buah.jpg',
-    'assets/images/apple.png',
-    'assets/images/google.png',
+    'assets/images/contohbanner1.png',
+    'assets/images/contohbanner2.png',
+    'assets/images/contohbanner3.png',
   ];
 
   @override
   void initState() {
     super.initState();
+    _controller = PageController(viewportFraction: 0.88); // spacing pas
     Future.delayed(const Duration(seconds: 3), _autoSlide);
   }
 
   void _autoSlide() {
     if (!mounted) return;
+
     _currentPage = (_currentPage + 1) % _images.length;
+
     _controller.animateToPage(
       _currentPage,
       duration: const Duration(milliseconds: 600),
       curve: Curves.easeInOut,
     );
+
     Future.delayed(const Duration(seconds: 3), _autoSlide);
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 160,
+      height:
+          MediaQuery.of(context).size.width * (9 / 16), // tinggi dinamis 16:9
       child: PageView.builder(
         controller: _controller,
+        padEnds: true,
         itemCount: _images.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.asset(_images[index], fit: BoxFit.cover),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
+            ), // spacing antar slide
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // background blur cover
+                    Image.asset(
+                      _images[index],
+                      fit: BoxFit.cover,
+                      color: Colors.black.withOpacity(0.2),
+                      colorBlendMode: BlendMode.darken,
+                      filterQuality: FilterQuality.low,
+                    ),
+
+                    // gambar utama tidak crop (contain)
+                    Center(
+                      child: Image.asset(_images[index], fit: BoxFit.contain),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         },
