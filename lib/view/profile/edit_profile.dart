@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:satu_digital/database/db_helper.dart';
 import 'package:satu_digital/model/user_model.dart';
 
-class EditProfilePage extends StatefulWidget {
+class EditProfileScreen extends StatefulWidget {
   final UserModel user;
-  const EditProfilePage({super.key, required this.user});
+  const EditProfileScreen({super.key, required this.user});
 
   @override
-  State<EditProfilePage> createState() => _EditProfilePageState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   final DbHelper dbHelper = DbHelper();
   late TextEditingController namaController;
   late TextEditingController emailController;
@@ -44,20 +44,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
             _buildField("Email", emailController),
             _buildField("No HP", hpController),
             _buildField("Kota Asal", kotaController),
+
             const SizedBox(height: 24),
+
+            //Tombol Simpan
             ElevatedButton.icon(
-              onPressed: () async {
-                final updatedUser = UserModel(
-                  id: widget.user.id,
-                  nama: namaController.text,
-                  email: emailController.text,
-                  noHp: hpController.text,
-                  password: widget.user.password,
-                  kota: kotaController.text,
-                );
-                await dbHelper.updateUser(updatedUser);
-                Navigator.pop(context, true);
-              },
+              onPressed: _save,
               icon: Icon(Icons.save, color: Colors.white),
               label: Text(
                 "Simpan Perubahan",
@@ -74,9 +66,68 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
             ),
+
+            const SizedBox(height: 30),
+
+            //Tombol Hapus Akun
+            TextButton.icon(
+              onPressed: _confirmDelete,
+              icon: const Icon(Icons.delete_forever, color: Colors.red),
+              label: const Text(
+                "Hapus Akun",
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  //SAVE FUNCTION
+  void _save() async {
+    final updatedUser = UserModel(
+      id: widget.user.id,
+      nama: namaController.text,
+      email: emailController.text,
+      noHp: hpController.text,
+      password: widget.user.password,
+      kota: kotaController.text,
+      role: widget.user.role,
+    );
+
+    await dbHelper.updateUser(updatedUser);
+    Navigator.pop(context, true);
+  }
+
+  //DELETE ACCOUNT
+  void _confirmDelete() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Hapus Akun?"),
+          content: const Text(
+            "Akun Anda akan dihapus permanen. Apakah Anda yakin?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await dbHelper.deleteUser(widget.user.id!);
+
+                Navigator.pop(context); // tutup dialog
+                Navigator.pop(context, "deleted"); // kembali ke profile_screen
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text("Hapus", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
     );
   }
 

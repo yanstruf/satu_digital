@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'login_screen.dart';
+import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
+import 'package:satu_digital/view/home_screen.dart';
+import 'package:satu_digital/view/login_screen.dart';
+import 'package:satu_digital/view/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,12 +33,38 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
+    // Jalankan pengecekan login
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    await Future.delayed(const Duration(seconds: 3)); // tunggu splash selesai
+
+    final isLoggedIn = await SharedPrefService.isLoggedIn();
+    final role = await SharedPrefService.getUserRole();
+
+    if (!mounted) return; // mencegah error jika widget disposed
+
+    if (isLoggedIn) {
+      // Jika sudah login, arahkan ke halaman sesuai role
+      if (role == 'admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AdminDashboard()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomePage()),
+        );
+      }
+    } else {
+      // Jika belum login, arahkan ke login screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
-    });
+    }
   }
 
   @override
@@ -72,10 +100,10 @@ class _SplashScreenState extends State<SplashScreen>
                   Image.asset('assets/images/ikondark_nobg.png', width: 200),
                   const SizedBox(height: 40),
 
-                  Text(
+                  const Text(
                     'Selamat datang di aplikasi Satu Digital',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,
                       fontWeight: FontWeight.w500,

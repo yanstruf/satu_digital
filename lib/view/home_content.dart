@@ -1,16 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:satu_digital/view/artikel/article_screen.dart';
 
 class HomeContent extends StatelessWidget {
   HomeContent({super.key});
 
-  final List<Map<String, String>> productList = [
-    {'image': 'assets/images/apple.png'},
-    {'image': 'assets/images/buah.jpg'},
-    {'image': 'assets/images/sayur.jpg'},
-    {'image': 'assets/images/elektronik.jpg'},
-    {'image': 'assets/images/google.png'},
-    {'image': 'assets/images/meme1.jpg'},
+  // Dummy produk (gunakan picsum supaya aman)
+  final List<Map<String, dynamic>> products = [
+    {
+      "name": "Premium Website",
+      "price": "Rp 1.250.000",
+      "location": "Bandung",
+      "rating": 4.9,
+      "image": "https://picsum.photos/seed/p1/600",
+    },
+    {
+      "name": "Jasa Foto Produk",
+      "price": "Rp 350.000",
+      "location": "Jakarta",
+      "rating": 4.7,
+      "image": "https://picsum.photos/seed/p2/600",
+    },
+  ];
+
+  // Dummy artikel
+  final List<Map<String, String>> articles = [
+    {
+      "title": "Cara Membuat UMKM Go Digital",
+      "image": "https://picsum.photos/seed/a1/600",
+    },
+    {
+      "title": "Tips Branding Bisnis dengan Biaya Murah",
+      "image": "https://picsum.photos/seed/a2/600",
+    },
   ];
 
   @override
@@ -21,76 +41,33 @@ class HomeContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Search Bar
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const TextField(
-              decoration: InputDecoration(
-                hintText: "Cari produk atau kebutuhan anda . . .",
-                hintStyle: TextStyle(color: Colors.grey),
-                prefixIcon: Icon(Icons.search),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.all(14),
+          TextField(
+            decoration: InputDecoration(
+              hintText: "Cari produk...",
+              prefixIcon: const Icon(Icons.search),
+              filled: true,
+              fillColor: Colors.grey[200],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25),
+                borderSide: BorderSide.none,
               ),
             ),
           ),
+
           const SizedBox(height: 20),
 
-          // Banner Slider Otomatis
-          const AutoSlideBanner(),
-          const SizedBox(height: 20),
-
-          // Bagian Kategori
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: const Text(
-              "Kategori",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Center(
-            child: SizedBox(
-              height: 90, // tinggi area kategori
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    CategoryIcon(
-                      imagePath: 'assets/images/buah.jpg',
-                      title: 'Buah',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ArtikelPage(),
-                          ),
-                        );
-                      },
-                    ),
-                    CategoryIcon(
-                      imagePath: 'assets/images/sayur.jpg',
-                      title: 'Sayur',
-                    ),
-                    // CategoryIcon(
-                    //   imagePath: 'assets/images/beras.jpg',
-                    //   title: 'Beras',
-                    // ),
-                    // CategoryIcon(
-                    //   imagePath: 'assets/images/ikan.jpg',
-                    //   title: 'Ikan',
-                    // ),
-                    //   CategoryIcon(
-                    //     imagePath: 'assets/images/daging.jpg',
-                    //     title: 'Daging',
-                    //   ),
-                    //   CategoryIcon(
-                    //     imagePath: 'assets/images/alat.jpg',
-                    //     title: 'Peralatan',
-                    //   ),
-                  ],
-                ),
+          // Banner Network
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.network(
+              "https://picsum.photos/seed/banner1/1200/600",
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                height: 150,
+                color: Colors.grey[300],
+                child: const Center(child: Icon(Icons.broken_image)),
               ),
             ),
           ),
@@ -100,259 +77,65 @@ class HomeContent extends StatelessWidget {
           // Produk
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Produk",
+            children: const [
+              Text(
+                "Produk Terbaru",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              GestureDetector(
-                onTap: () {
-                  // TODO: nanti bisa diarahkan ke halaman semua produk
-                  // Navigator.push(context, MaterialPageRoute(builder: (_) => AllProductPage()));
-                },
-                child: const Text(
-                  "Lihat semua",
-                  style: TextStyle(color: Colors.teal),
-                ),
-              ),
+              Text("Lihat Semua", style: TextStyle(color: Colors.teal)),
             ],
           ),
-          const SizedBox(height: 10),
 
-          // Grid Produk
+          const SizedBox(height: 12),
+
           GridView.builder(
-            itemCount: productList.length,
-            physics: const NeverScrollableScrollPhysics(),
+            itemCount: products.length,
             shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 0.67,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.75,
             ),
             itemBuilder: (context, index) {
-              final product = productList[index];
-              return ProductCard(imagePath: product['image']);
+              return productCard(products[index]);
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
 
-          // Berita Terbaru
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF009688),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    "Berita terbaru",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "Hasil greeding dari Budi Farm",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                const Text(
-                  "Budi farm berhasil menghasilkan 10 ton beras dari hasil greeding",
-                  style: TextStyle(color: Colors.white70),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ArtikelPage()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text("Lainnya"),
-                ),
-              ],
-            ),
+          // Artikel
+          const Text(
+            "Artikel",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+
+          ListView.builder(
+            itemCount: articles.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return articleCard(articles[index]);
+            },
           ),
         ],
       ),
     );
   }
-}
 
-// Banner otomatis slide
-class AutoSlideBanner extends StatefulWidget {
-  const AutoSlideBanner({super.key});
-
-  @override
-  State<AutoSlideBanner> createState() => _AutoSlideBannerState();
-}
-
-class _AutoSlideBannerState extends State<AutoSlideBanner> {
-  late final PageController _controller;
-  int _currentPage = 0;
-
-  final List<String> _images = [
-    'assets/images/contohbanner1.png',
-    'assets/images/contohbanner2.png',
-    'assets/images/contohbanner3.png',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = PageController(viewportFraction: 0.88); // spacing pas
-    Future.delayed(const Duration(seconds: 3), _autoSlide);
-  }
-
-  void _autoSlide() {
-    if (!mounted) return;
-
-    _currentPage = (_currentPage + 1) % _images.length;
-
-    _controller.animateToPage(
-      _currentPage,
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeInOut,
-    );
-
-    Future.delayed(const Duration(seconds: 3), _autoSlide);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height:
-          MediaQuery.of(context).size.width * (9 / 16), // tinggi dinamis 16:9
-      child: PageView.builder(
-        controller: _controller,
-        padEnds: true,
-        itemCount: _images.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-            ), // spacing antar slide
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // background blur cover
-                    Image.asset(
-                      _images[index],
-                      fit: BoxFit.cover,
-                      color: Colors.black.withOpacity(0.2),
-                      colorBlendMode: BlendMode.darken,
-                      filterQuality: FilterQuality.low,
-                    ),
-
-                    // gambar utama tidak crop (contain)
-                    Center(
-                      child: Image.asset(_images[index], fit: BoxFit.contain),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-// Category Card
-class CategoryCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const CategoryCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  // --- CARD PRODUK ---
+  Widget productCard(Map<String, dynamic> item) {
     return Container(
-      width: 150,
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundColor: Colors.teal.withOpacity(0.1),
-            child: Icon(icon, color: Colors.teal, size: 28),
-          ),
-          const SizedBox(height: 8),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(
-            subtitle,
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Product Card
-class ProductCard extends StatelessWidget {
-  final String? imagePath; // pakai nullable, biar bisa default
-
-  const ProductCard({super.key, this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
-            blurRadius: 6,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
@@ -360,100 +143,97 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Gambar Produk
+          // Product image
           ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-            ),
-            child: AspectRatio(
-              aspectRatio: 1, // rasio 1:1 (kotak), bisa ubah jadi 3/2, 4/3, dll
-              child: Image.asset(
-                imagePath!,
-                fit: BoxFit.cover, // isi penuh, tapi bisa sedikit terpotong
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              item["image"],
+              height: 110,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                height: 110,
+                color: Colors.grey[300],
+                child: const Center(child: Icon(Icons.broken_image)),
               ),
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
 
-          // Info Produk
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Nama Produk",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "Rp 0",
-                  style: TextStyle(
-                    color: Colors.teal,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+          Text(
+            item["name"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+
+          Text(
+            item["price"],
+            style: const TextStyle(
+              color: Colors.teal,
+              fontWeight: FontWeight.bold,
             ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Row(
+            children: [
+              const Icon(Icons.location_on, size: 14, color: Colors.grey),
+              Text(item["location"], style: const TextStyle(fontSize: 12)),
+            ],
+          ),
+
+          Row(
+            children: [
+              const Icon(Icons.star, size: 14, color: Colors.amber),
+              Text(
+                item["rating"].toString(),
+                style: const TextStyle(fontSize: 12),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-}
 
-class CategoryIcon extends StatelessWidget {
-  final String imagePath;
-  final String title;
-  final VoidCallback? onTap;
-
-  const CategoryIcon({
-    super.key,
-    required this.imagePath,
-    required this.title,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(right: 16),
-        child: Column(
-          children: [
-            // Gambar kategori
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
+  // --- CARD ARTIKEL ---
+  Widget articleCard(Map<String, String> item) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+      ),
+      child: Row(
+        children: [
+          // Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              item["image"]!,
+              width: 110,
+              height: 80,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                width: 110,
+                height: 80,
+                color: Colors.grey[300],
+                child: const Center(child: Icon(Icons.broken_image)),
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 12),
-              overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Text(
+              item["title"]!,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

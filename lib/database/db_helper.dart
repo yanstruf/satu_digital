@@ -4,7 +4,6 @@ import 'package:sqflite/sqflite.dart';
 
 class DbHelper {
   static Database? _database;
-
   static const _dbName = 'user_database.db';
   static const _dbVersion = 2;
   static const tableUser = 'users';
@@ -97,6 +96,22 @@ class DbHelper {
 
     if (result.isNotEmpty) {
       return UserModel.fromMap(result.first);
+    } else {
+      return null;
+    }
+  }
+
+  // GET USER BY EMAIL
+  Future<UserModel?> getUserByEmail(String email) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableUser,
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+
+    if (maps.isNotEmpty) {
+      return UserModel.fromMap(maps.first);
     } else {
       return null;
     }

@@ -17,28 +17,28 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     HomeContent(),
     const ChatPage(),
-    const OrderPage(),
-    const ProfilePage(),
+    OrderScreen(),
+    const ProfileScreen(),
     const Center(child: Text("kosong?")),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF009688),
-        title: Text(
-          "Beranda",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
-      ),
+      // backgroundColor: const Color(0xFFF3F4F6),
+      // appBar: AppBar(
+      //   backgroundColor: const Color(0xFF009688),
+      //   title: Text(
+      //     "Beranda",
+      //     style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.notifications, color: Colors.white),
+      //       onPressed: () {},
+      //     ),
+      //   ],
+      // ),
 
       // Halaman utama berubah sesuai tab
       body: _pages[_selectedIndex],
@@ -55,7 +55,10 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.shopping_bag),
             label: "Order",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profil"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "Pengaturan",
+          ),
         ],
       ),
     );

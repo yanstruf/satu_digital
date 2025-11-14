@@ -203,11 +203,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   final user = await dbHelper.loginUser(email, password);
 
                   if (user != null) {
-                    // ✅ Simpan data login ke SharedPreferences
-                    await SharedPrefService.saveLogin(
-                      user.email,
-                      user.role ?? 'user',
-                    );
+                    // Simpan login ke SharedPreferences
+                    await SharedPrefService.saveLogin(user.email, user.role);
 
                     if (user.role == 'admin') {
                       Navigator.pushReplacement(
@@ -230,6 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   }
                 },
+
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.white,
