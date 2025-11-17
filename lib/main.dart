@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:satu_digital/view/chat_page/chat_screen.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:satu_digital/view/chat_screen/chat_screen.dart';
 import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
 import 'package:satu_digital/view/form_register.dart';
 import 'package:satu_digital/view/home_screen.dart';
 import 'package:satu_digital/view/login_screen.dart';
 import 'package:satu_digital/view/register_success.dart';
 import 'package:satu_digital/view/splash_screen.dart';
-import 'package:sqflite/sqflite.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         '/success': (context) => const SuccessRegister(),
         '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const AdminDashboard(),
-        '/home': (context) => const HomePage(),
+        '/home': (context) => const HomeScreen(),
       },
     );
   }

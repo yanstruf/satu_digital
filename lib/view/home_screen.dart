@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:satu_digital/view/chat_page/chat_screen.dart';
+import 'package:satu_digital/view/chat_screen/chat_screen.dart';
 import 'package:satu_digital/view/home_content.dart';
 import 'package:satu_digital/view/order_screen/order_screen.dart';
-import 'package:satu_digital/view/profile/profile_screen.dart';
+import 'package:satu_digital/view/setting/settings_screen.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
