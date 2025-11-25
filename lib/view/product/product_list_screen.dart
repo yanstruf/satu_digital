@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:satu_digital/database/db_helper.dart';
 import 'package:satu_digital/model/product_model.dart';
+// import 'package:satu_digital/view/product/product_edit_screen.dart';
+import 'package:satu_digital/utils/format.dart';
 import 'package:satu_digital/view/product/product_add_screen.dart';
 import 'package:satu_digital/view/product/product_detail_screen.dart';
-import 'package:satu_digital/view/product/product_edit_screen.dart';
-import 'package:satu_digital/utils/format.dart';
 
 class ProductListScreen extends StatefulWidget {
   final int? currentUserId;
   final String? currentUserRole; // "admin" or "user"
-  const ProductListScreen({super.key, this.currentUserId, this.currentUserRole});
+  const ProductListScreen({
+    super.key,
+    this.currentUserId,
+    this.currentUserRole,
+  });
 
   @override
   State<ProductListScreen> createState() => _ProductListScreenState();
@@ -42,10 +46,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
             icon: const Icon(Icons.add_box_rounded),
             onPressed: () async {
               // allow both admin and user to add (per pilihan A)
-              final res = await Navigator.push(context, MaterialPageRoute(builder: (_) => ProductAddScreen(currentUserId: widget.currentUserId)));
+              final res = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      ProductAddScreen(currentUserId: widget.currentUserId),
+                ),
+              );
               if (res == true) _refresh();
             },
-          )
+          ),
         ],
       ),
       body: FutureBuilder<List<ProductModel>>(
@@ -73,19 +83,41 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 final p = list[index];
                 return GestureDetector(
                   onTap: () async {
-                    final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: p, currentUserId: widget.currentUserId, currentUserRole: widget.currentUserRole)));
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailScreen(
+                          product: p,
+                          currentUserId: widget.currentUserId,
+                          currentUserRole: widget.currentUserRole,
+                        ),
+                      ),
+                    );
                     if (result == true) _refresh();
                   },
                   child: Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     elevation: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                            child: Image.network(p.image, width: double.infinity, fit: BoxFit.cover, errorBuilder: (_,__,___) => Container(color: Colors.grey[200], child: const Icon(Icons.broken_image))),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            child: Image.network(
+                              p.image,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.broken_image),
+                              ),
+                            ),
                           ),
                         ),
                         Padding(
@@ -93,20 +125,55 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                p.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text(formatRupiah(p.price), style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.bold)),
+                              Text(
+                                formatRupiah(p.price),
+                                style: const TextStyle(
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 6),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(p.ownerId != null ? 'Owner: ${p.ownerId}' : '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
-                                  Row(children: const [Icon(Icons.star, size: 12, color: Colors.amber), SizedBox(width: 4), Text('4.8', style: TextStyle(fontSize: 12))]),
+                                  Text(
+                                    p.ownerId != null
+                                        ? 'Owner: ${p.ownerId}'
+                                        : '',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: const [
+                                      Icon(
+                                        Icons.star,
+                                        size: 12,
+                                        color: Colors.amber,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        '4.8',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

@@ -19,7 +19,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController hpController;
   late TextEditingController kotaController;
 
-  bool _passwordVisible = false; // <-- tambahan
+  bool passwordVisible = false;
 
   @override
   void initState() {
@@ -117,7 +117,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
         controller: passwordController,
-        obscureText: !_passwordVisible,
+        obscureText: !passwordVisible,
         decoration: InputDecoration(
           labelText: "Password",
           filled: true,
@@ -125,12 +125,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           suffixIcon: IconButton(
             icon: Icon(
-              _passwordVisible ? Icons.visibility : Icons.visibility_off,
+              passwordVisible ? Icons.visibility : Icons.visibility_off,
               color: Colors.black54,
             ),
             onPressed: () {
               setState(() {
-                _passwordVisible = !_passwordVisible;
+                passwordVisible = !passwordVisible;
               });
             },
           ),
@@ -141,19 +141,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // SAVE FUNCTION
   void _save() async {
-  final updatedUser = UserModel(
-    id: widget.user.id,
-    nama: namaController.text,
-    email: emailController.text,
-    noHp: hpController.text,
-    password: passwordController.text, // password sekarang ikut disimpan
-    kota: kotaController.text,
-    role: widget.user.role,
-  );
+    final updatedUser = UserModel(
+      id: widget.user.id,
+      nama: namaController.text,
+      email: emailController.text,
+      noHp: hpController.text,
+      password: passwordController.text, // password sekarang ikut disimpan
+      kota: kotaController.text,
+      role: widget.user.role,
+    );
 
-  await dbHelper.updateUser(updatedUser);
-  Navigator.pop(context, true);
-}
+    await dbHelper.updateUser(updatedUser);
+    Navigator.pop(context, true);
+  }
 
   // DELETE ACCOUNT
   void _confirmDelete() {

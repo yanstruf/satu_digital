@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:satu_digital/firebase_option.dart';
 import 'package:satu_digital/view/chat_screen/chat_screen.dart';
 import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
 import 'package:satu_digital/view/form_register.dart';
@@ -8,9 +10,14 @@ import 'package:satu_digital/view/home_screen.dart';
 import 'package:satu_digital/view/login_screen.dart';
 import 'package:satu_digital/view/register_success.dart';
 import 'package:satu_digital/view/splash_screen.dart';
+import 'package:sqflite/sqflite.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final dbPath = await getDatabasesPath();
   final path = join(dbPath, 'user_database.db');
@@ -35,9 +42,9 @@ class MyApp extends StatelessWidget {
 
       home: const SplashScreen(),
       routes: {
-        '/chat': (context) => const ChatPage(),
+        '/chat': (context) => const ChatScreen(),
         '/splash': (context) => const SplashScreen(),
-        '/daftar': (context) => const FormPendaftaran(),
+        '/daftar': (context) => const FormPendaftaranFirebase(),
         '/success': (context) => const SuccessRegister(),
         '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const AdminDashboard(),

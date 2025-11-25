@@ -1,11 +1,11 @@
 class UserModel {
   final int? id;
-  final String nama;
+  final String nama; // username
   final String email;
   final String noHp;
-  final String password;
+  final String password; // WAJIB, karena login lokal
   final String kota;
-  final String? role;
+  final String role;
 
   UserModel({
     this.id,
@@ -14,24 +14,21 @@ class UserModel {
     required this.noHp,
     required this.password,
     required this.kota,
-    this.role,
+    this.role = "user",
   });
 
-  // Konversi dari Map ke Object
- factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'],
       nama: map['nama'] ?? '',
       email: map['email'] ?? '',
-      noHp: map['noHp'] ?? '',
+      noHp: map['noHp']?.toString() ?? '',
       password: map['password'] ?? '',
       kota: map['kota'] ?? '',
       role: map['role'] ?? 'user',
     );
   }
 
-
-  // Konversi dari Object ke Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -40,7 +37,7 @@ class UserModel {
       'noHp': noHp,
       'password': password,
       'kota': kota,
-      'role': role ?? 'user',
+      'role': role,
     };
   }
 }

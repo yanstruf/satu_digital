@@ -5,16 +5,17 @@ import 'package:satu_digital/view/login_screen.dart';
 import 'package:satu_digital/view/setting/edit_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class SettingScreen extends StatefulWidget {
+  const SettingScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<SettingScreen> createState() => _SettingScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _SettingScreenState extends State<SettingScreen> {
   final DbHelper dbHelper = DbHelper();
   UserModel? _user;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -23,17 +24,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadUser() async {
-    final users = await dbHelper.getUsers();
-    if (users.isNotEmpty) {
+    try {
+      final users = await dbHelper.getUsers();
+      if (!mounted) return;
+
+      if (users.isNotEmpty) {
+        setState(() {
+          _user = users.first;
+          _isLoading = false;
+        });
+      } else {
+        // fallback UserModel dengan semua required parameter
+        setState(() {
+          _user = UserModel(
+            id: 0,
+            nama: "Guest",
+            email: "-",
+            noHp: "-",
+            password: "-",
+            kota: "-",
+          );
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error loading user: $e");
+      if (!mounted) return;
       setState(() {
-        _user = users.first;
+        _user = UserModel(
+          id: 0,
+          nama: "",
+          email: "",
+          noHp: "",
+          password: "",
+          kota: "",
+        );
+        _isLoading = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_user == null) {
+    if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
@@ -48,7 +81,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 1,
         centerTitle: true,
       ),
-
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -161,8 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // COMPONENT
-
+  // COMPONENTS
   Widget _menuTile(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: Colors.teal),

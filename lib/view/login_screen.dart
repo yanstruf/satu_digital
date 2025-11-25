@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:satu_digital/database/db_helper.dart';
+import 'package:satu_digital/service/firebase.dart';
+import 'package:satu_digital/service/preference_handler.dart';
 import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
 import 'package:satu_digital/view/form_register.dart';
 import 'package:satu_digital/view/home_screen.dart';
-import 'package:satu_digital/view/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,14 +17,56 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
-  bool _rememberMe = false;
+  final bool _rememberMe = false;
+  bool _loading = false;
 
-  @override
-  void dispose() {
-    // Jangan lupa dispose untuk mencegah memory leak
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+  Future<void> _loginFirebase() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email dan Password wajib diisi")),
+      );
+      return;
+    }
+
+    try {
+      setState(() => _loading = true);
+
+      final user = await FirebaseService.loginUser(
+        email: email,
+        password: password,
+      );
+
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Email atau Password salah!")),
+        );
+        return;
+      }
+
+      // Simpan ke Preferences
+      await SharedPrefService.saveLogin(user.email, user.role);
+
+      if (user.role == "admin") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AdminDashboard()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Login gagal: $e")));
+    } finally {
+      setState(() => _loading = false);
+    }
   }
 
   @override
@@ -35,27 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Logo & Judul
-              Row(
-                children: [
-                  // Icon(Icons.abc),
-                  // // Image.asset('assets/images/logo.png', width: 40, height: 40),
-                  // const SizedBox(width: 10),
-                  // Text(
-                  //   "Satu Digital",
-                  //   style: TextStyle(
-                  //     color: Colors.white,
-                  //     fontSize: 20,
-                  //     fontWeight: FontWeight.w600,
-                  //   ),
-                  // ),
-                ],
-              ),
               const SizedBox(height: 40),
 
-              // Selamat Datang
               Text(
                 "Selamat datang!",
                 style: TextStyle(
@@ -64,208 +88,70 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                "Masuk akun untuk melanjutkan!",
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
               const SizedBox(height: 32),
 
-              // Tombol Google & Apple
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildSocialButton(
-                    'Google',
-                    Icon(Icons.circle_notifications),
-                  ),
-                  _buildSocialButton('Apple', Icon(Icons.alarm)),
-                  // _buildSocialButton("Google", "assets/images/google.png"),
-                  // _buildSocialButton("Apple", "assets/images/apple.png"),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Garis OR
-              Row(
-                children: const [
-                  Expanded(child: Divider(color: Colors.white70)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text("OR", style: TextStyle(color: Colors.white)),
-                  ),
-                  Expanded(child: Divider(color: Colors.white70)),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Input Email
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Masukan Email",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 6),
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: "Masukan email",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                decoration: _inputDecoration("Masukkan email"),
               ),
               const SizedBox(height: 16),
 
-              // Input Password
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Password", style: TextStyle(color: Colors.white)),
-              ),
-              const SizedBox(height: 6),
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
-                decoration: InputDecoration(
-                  hintText: "Masukkan password anda",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                decoration: _inputDecoration("Masukkan password").copyWith(
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
+                    onPressed: () => setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    }),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
 
-              // Ingat saya & Lupa password
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _rememberMe,
-                        onChanged: (val) {
-                          setState(() => _rememberMe = val!);
-                        },
-                        side: const BorderSide(color: Colors.white),
-                        activeColor: Colors.white,
-                        checkColor: Colors.teal,
-                      ),
-                      Text("Ingat saya", style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Lupa password ?",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
 
-              // Tombol Masuk
               ElevatedButton(
-                onPressed: () async {
-                  final email = _emailController.text;
-                  final password = _passwordController.text;
-
-                  if (email.isEmpty || password.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Email dan Password wajib diisi'),
-                      ),
-                    );
-                    return;
-                  }
-
-                  final dbHelper = DbHelper();
-                  final user = await dbHelper.loginUser(email, password);
-
-                  if (user != null) {
-                    // Simpan login ke SharedPreferences
-                    await SharedPrefService.saveLogin(user.email, user.role);
-
-                    if (user.role == 'admin') {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AdminDashboard(),
-                        ),
-                      );
-                    } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const HomeScreen()),
-                      );
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Email atau Password salah!'),
-                      ),
-                    );
-                  }
-                },
-
+                onPressed: _loading ? null : _loginFirebase,
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                 ),
-                child: const Text(
-                  "Masuk",
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: _loading
+                    ? const CircularProgressIndicator()
+                    : const Text(
+                        "Masuk",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
 
               const SizedBox(height: 12),
 
-              // Belum punya akun
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Belum punya akun ? ",
+                  const Text(
+                    "Belum punya akun? ",
                     style: TextStyle(color: Colors.white),
                   ),
-
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FormPendaftaran(),
+                          builder: (_) => const FormPendaftaranFirebase(),
                         ),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       "Daftar",
                       style: TextStyle(
                         color: Colors.white,
@@ -282,29 +168,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Widget Tombol Sosial
-  Widget _buildSocialButton(String text, Widget icon) {
-    return Container(
-      width: 140,
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white,
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      hintText: label,
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(width: 22, height: 22, child: icon),
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+        borderSide: BorderSide.none,
       ),
     );
   }

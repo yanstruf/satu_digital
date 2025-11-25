@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 import 'package:satu_digital/database/db_helper.dart';
 import 'package:satu_digital/model/product_model.dart';
 
 class HomeContent extends StatefulWidget {
-  HomeContent({super.key});
+  const HomeContent({super.key});
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -23,19 +23,23 @@ class _HomeContentState extends State<HomeContent> {
   final List<Map<String, String>> articles = [
     {
       "title": "5 Cara UMKM Go Digital dengan Modal Minim",
-      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600",
+      "image":
+          "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600",
     },
     {
       "title": "Tips Membuat Branding Bisnis Lebih Profesional",
-      "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600",
+      "image":
+          "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600",
     },
     {
       "title": "Kenapa Bisnis Butuh Website di 2025?",
-      "image": "https://images.unsplash.com/photo-1502882702201-7029a3ee5e3c?w=600",
+      "image":
+          "https://images.unsplash.com/photo-1502882702201-7029a3ee5e3c?w=600",
     },
     {
       "title": "Strategi Digital Marketing yang Cocok untuk UMKM",
-      "image": "https://images.unsplash.com/photo-1551434678-e076c223a692?w=600",
+      "image":
+          "https://images.unsplash.com/photo-1551434678-e076c223a692?w=600",
     },
   ];
 
@@ -223,9 +227,11 @@ class _HomeContentState extends State<HomeContent> {
             children: [
               const Icon(Icons.location_on, size: 14, color: Colors.grey),
               Expanded(
-                child: Text(item.location,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.ellipsis),
+                child: Text(
+                  item.location,
+                  style: const TextStyle(fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
@@ -233,8 +239,10 @@ class _HomeContentState extends State<HomeContent> {
           Row(
             children: [
               const Icon(Icons.star, size: 14, color: Colors.amber),
-              Text(item.rating.toString(),
-                  style: const TextStyle(fontSize: 12)),
+              Text(
+                item.rating.toString(),
+                style: const TextStyle(fontSize: 12),
+              ),
             ],
           ),
         ],
@@ -268,8 +276,7 @@ class _HomeContentState extends State<HomeContent> {
           Expanded(
             child: Text(
               item["title"]!,
-              style:
-                  const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -277,4 +284,3 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 }
- 

@@ -16,9 +16,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     HomeContent(),
-    const ChatPage(),
+    const ChatScreen(),
     OrderScreen(),
-    const ProfileScreen(),
+    const SettingScreen(),
     const Center(child: Text("kosong?")),
   ];
 
