@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:satu_digital/service/firebase.dart';
 import 'package:satu_digital/service/preference_handler.dart';
+import 'package:satu_digital/service/user_repository.dart';
 import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
 import 'package:satu_digital/view/form_register.dart';
 import 'package:satu_digital/view/home_screen.dart';
@@ -34,9 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       setState(() => _loading = true);
 
-      final user = await FirebaseService.loginUser(
-        email: email,
-        password: password,
+      final repo = UserRepository();
+
+      final user = await repo.login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
 
       if (user == null) {

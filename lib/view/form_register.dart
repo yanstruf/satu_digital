@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:satu_digital/service/firebase.dart';
+// import 'package:satu_digital/service/firebase.dart';
+import 'package:satu_digital/service/user_repository.dart';
 import 'package:satu_digital/view/register_success.dart';
 
 class FormPendaftaranFirebase extends StatefulWidget {
@@ -97,7 +98,7 @@ class _FormPendaftaranFirebaseState extends State<FormPendaftaranFirebase> {
                   ),
                 ),
                 child: const Text(
-                  "Daftar Firebase",
+                  "Daftar",
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -139,16 +140,18 @@ class _FormPendaftaranFirebaseState extends State<FormPendaftaranFirebase> {
   Future<void> _registerFirebase() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final model = await FirebaseService.registerUser(
-          email: _emailController.text,
-          username: _namaController.text,
-          password: _passwordController.text,
-          noHp: _noHpController.text,
-          kota: _kotaController.text,
+        final repo = UserRepository();
+
+        final result = await repo.register(
+          email: _emailController.text.trim(),
+          username: _namaController.text.trim(),
+          password: _passwordController.text.trim(),
+          noHp: _noHpController.text.trim(),
+          kota: _kotaController.text.trim(),
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Berhasil daftar: ${model.email}")),
+          SnackBar(content: Text("Berhasil daftar: ${result.email}")),
         );
 
         Navigator.pushReplacement(

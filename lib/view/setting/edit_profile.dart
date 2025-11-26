@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:satu_digital/database/db_helper.dart';
+// import 'package:satu_digital/service/firebase.dart';
 import 'package:satu_digital/model/user_model.dart';
+import 'package:satu_digital/service/firebase.dart';
+import 'package:satu_digital/service/user_repository.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -141,17 +144,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // SAVE FUNCTION
   void _save() async {
-    final updatedUser = UserModel(
-      id: widget.user.id,
-      nama: namaController.text,
-      email: emailController.text,
+    final repo = UserRepository();
+
+    // ambil current firebase uid — pastikan user sudah login ke Firebase
+    final currentUid = FirebaseService.auth.currentUser?.uid;
+    if (currentUid == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Tidak terhubung ke Firebase")),
+      );
+      return;
+    }
+
+    await repo.updateProfile(
+      uid: currentUid,
+      username: namaController.text,
       noHp: hpController.text,
-      password: passwordController.text, // password sekarang ikut disimpan
       kota: kotaController.text,
-      role: widget.user.role,
     );
 
-    await dbHelper.updateUser(updatedUser);
+    if (!mounted) return;
     Navigator.pop(context, true);
   }
 

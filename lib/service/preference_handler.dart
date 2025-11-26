@@ -8,9 +8,9 @@ class SharedPrefService {
   /// Simpan status login
   static Future<void> saveLogin(String? email, String? role) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true);
-    await prefs.setString('email', email ?? '');
-    await prefs.setString('role', role ?? '');
+    await prefs.setBool(keyIsLoggedIn, true);
+    await prefs.setString(keyUserEmail, email ?? '');
+    await prefs.setString(keyUserRole, role ?? '');
   }
 
   /// Cek apakah user sudah login

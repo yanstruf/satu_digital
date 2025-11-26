@@ -17,7 +17,17 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    Firebase.apps.isEmpty
+        ? await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+          )
+        : Firebase.app();
+  } catch (e) {
+    print("Firebase sudah pernah diinisialisasi → $e");
+  }
+
+  print("🔥 Firebase Berhasil Terhubung!");
 
   final dbPath = await getDatabasesPath();
   final path = join(dbPath, 'user_database.db');

@@ -149,7 +149,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
             _buildSection("Bantuan"),
             _menuTile(Icons.help_outline, "Pusat Bantuan", () {}),
-            _menuTile(Icons.chat_bubble_outline, "Chat Admin", () {}),
+            _menuTile(Icons.support_agent_outlined, "Chat Admin", () {}),
             _menuTile(Icons.info_outline, "Tentang Aplikasi", () {}),
 
             const SizedBox(height: 20),

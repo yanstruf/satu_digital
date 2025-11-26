@@ -1,3 +1,5 @@
+// file: lib/service/firebase.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:satu_digital/model/user_firebase_model.dart';
@@ -13,108 +15,63 @@ class FirebaseService {
     required String noHp,
     required String kota,
   }) async {
-    print("========================================");
-    print("🔥 [REGISTER] Mulai proses registrasi...");
-    print("Email      : $email");
-    print("Username   : $username");
-    print("No HP      : $noHp");
-    print("Kota       : $kota");
-    print("----------------------------------------");
+    final cred = await auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-    try {
-      print("📌 Project Firebase: ${firestore.app.options.projectId}");
-      print("📌 API Key         : ${firestore.app.options.apiKey}");
-      print("📌 App ID          : ${firestore.app.options.appId}");
-      print("----------------------------------------");
+    final uid = cred.user!.uid;
+    final now = DateTime.now().toIso8601String();
 
-      print("🚀 Step 1: Create user with email & password...");
-      final cred = await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    final model = UserFirebaseModel(
+      uid: uid,
+      username: username,
+      email: email,
+      noHp: noHp,
+      kota: kota,
+      role: "user", // penting
+      createdAt: now,
+      updatedAt: now,
+    );
 
-      final user = cred.user!;
-      print("✅ Berhasil createUser!");
-      print("→ UID: ${user.uid}");
-      print("----------------------------------------");
-
-      final now = DateTime.now().toIso8601String();
-
-      final model = UserFirebaseModel(
-        uid: user.uid,
-        username: username,
-        email: email,
-        noHp: noHp,
-        kota: kota,
-        createdAt: now,
-        updatedAt: now,
-      );
-
-      print("🚀 Step 2: Simpan ke Firestore...");
-      print("Data yg dikirim:");
-      print(model.toMap());
-      print("----------------------------------------");
-
-      await firestore.collection('users').doc(user.uid).set(model.toMap());
-
-      print("✅ Data tersimpan di Firestore!");
-      print("→ Collection : users");
-      print("→ Document   : ${user.uid}");
-      print("========================================");
-
-      return model;
-    } catch (e) {
-      print("❌ ERROR SAAT REGISTER");
-      print("Error detail: $e");
-      print("========================================");
-      rethrow;
-    }
+    await firestore.collection('users').doc(uid).set(model.toMap());
+    return model;
   }
 
   static Future<UserFirebaseModel?> loginUser({
     required String email,
     required String password,
   }) async {
-    print("========================================");
-    print("🔐 [LOGIN] Proses login dimulai...");
-    print("Email : $email");
-    print("----------------------------------------");
+    final cred = await auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-    try {
-      print("🚀 Step 1: signInWithEmailAndPassword...");
-      final cred = await auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    final snap = await firestore.collection('users').doc(cred.user!.uid).get();
+    if (!snap.exists) return null;
 
-      final user = cred.user;
-      if (user == null) {
-        print("❌ User null setelah login.");
-        return null;
-      }
+    return UserFirebaseModel.fromMap({'uid': cred.user!.uid, ...snap.data()!});
+  }
 
-      print("✅ Login berhasil! UID: ${user.uid}");
-      print("----------------------------------------");
+  static Future<void> updateUser({
+    required String uid,
+    required String username,
+    required String noHp,
+    required String kota,
+  }) async {
+    await firestore.collection('users').doc(uid).update({
+      'username': username,
+      'noHp': noHp,
+      'kota': kota,
+      'updatedAt': DateTime.now().toIso8601String(),
+    });
+  }
 
-      print("🚀 Step 2: Ambil data Firestore...");
-      final snap = await firestore.collection('users').doc(user.uid).get();
-
-      if (!snap.exists) {
-        print("❌ Document user tidak ditemukan di Firestore!");
-        return null;
-      }
-
-      print("✅ Data user ditemukan!");
-      print("Data: ${snap.data()}");
-      print("========================================");
-
-      return UserFirebaseModel.fromMap({'uid': user.uid, ...snap.data()!});
-    } catch (e) {
-      print("❌ ERROR SAAT LOGIN");
-      print("Error detail: $e");
-      print("========================================");
-
-      return null;
+  static Future<void> deleteUser(String uid) async {
+    await firestore.collection('users').doc(uid).delete();
+    // delete auth user (must be currently signed-in user)
+    if (auth.currentUser != null && auth.currentUser!.uid == uid) {
+      await auth.currentUser!.delete();
     }
   }
 }
