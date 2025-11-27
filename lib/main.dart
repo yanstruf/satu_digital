@@ -2,9 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:path/path.dart';
-import 'package:satu_digital/firebase_option.dart';
+import 'package:satu_digital/firebase_options.dart';
+import 'package:satu_digital/view/admin/admin_dashboard_screen.dart';
 import 'package:satu_digital/view/chat_screen/chat_screen.dart';
-import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
 import 'package:satu_digital/view/form_register.dart';
 import 'package:satu_digital/view/home_screen.dart';
 import 'package:satu_digital/view/login_screen.dart';
@@ -59,6 +59,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const AdminDashboard(),
         '/home': (context) => const HomeScreen(),
+        "/admin": (context) => AdminDashboard(),
       },
     );
   }

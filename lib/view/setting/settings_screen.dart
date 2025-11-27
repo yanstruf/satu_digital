@@ -38,7 +38,7 @@ class _SettingScreenState extends State<SettingScreen> {
         setState(() {
           _user = UserModel(
             id: 0,
-            nama: "Guest",
+            nama: "",
             email: "-",
             noHp: "-",
             password: "-",

@@ -144,6 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // SAVE FUNCTION
   void _save() async {
+    if (!mounted) return;
     final repo = UserRepository();
 
     // ambil current firebase uid — pastikan user sudah login ke Firebase
@@ -183,7 +184,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await dbHelper.deleteUser(widget.user.id!);
+                final repo = UserRepository();
+                await repo.deleteAccount(FirebaseService.auth.currentUser!.uid);
+                if (!mounted) return;
 
                 Navigator.pop(context);
                 Navigator.pop(context, "deleted");

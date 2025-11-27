@@ -1,37 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:satu_digital/model/order_model.dart';
+import 'package:satu_digital/service/order_service.dart';
 import 'package:satu_digital/view/order_screen/order_card.dart';
-import 'package:satu_digital/view/order_screen/order_model.dart';
 
 class OrderScreen extends StatelessWidget {
-  OrderScreen({super.key});
+  final String userId;
 
-  // Dummy local data
-  final List<OrderModel> orders = [
-    OrderModel(
-      id: "1",
-      title: "Iklan Premium 30 Hari",
-      price: "Rp 50.000",
-      status: "Selesai",
-      date: "12 Nov 2024",
-      image: "https://via.placeholder.com/150",
-    ),
-    OrderModel(
-      id: "2",
-      title: "Boost Iklan 7 Hari",
-      price: "Rp 20.000",
-      status: "Dikirim",
-      date: "10 Nov 2024",
-      image: "https://via.placeholder.com/150",
-    ),
-    OrderModel(
-      id: "3",
-      title: "Upgrade Akun Pro",
-      price: "Rp 120.000",
-      status: "Menunggu Pembayaran",
-      date: "5 Nov 2024",
-      image: "https://via.placeholder.com/150",
-    ),
-  ];
+  OrderScreen({super.key, required this.userId});
+
+  final orderService = OrderService();
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +20,38 @@ class OrderScreen extends StatelessWidget {
         ),
         backgroundColor: const Color(0xFF007C82),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          return OrderCard(order: orders[index]);
+
+      body: StreamBuilder<List<OrderModel>>(
+        stream: orderService.streamOrders(userId),
+        builder: (context, snapshot) {
+          /// ==================
+          /// Loading
+          /// ==================
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          /// ==================
+          /// No orders
+          /// ==================
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text(
+                "Belum ada pesanan.",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            );
+          }
+
+          final orders = snapshot.data!;
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              return OrderCard(order: orders[index]);
+            },
+          );
         },
       ),
     );

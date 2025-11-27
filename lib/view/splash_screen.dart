@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:satu_digital/service/preference_handler.dart';
-import 'package:satu_digital/view/dashboard/admin_dashboard.dart';
+import 'package:satu_digital/view/admin/admin_dashboard_screen.dart';
 import 'package:satu_digital/view/home_screen.dart';
 import 'package:satu_digital/view/login_screen.dart';
 

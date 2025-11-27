@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:satu_digital/database/db_helper.dart';
 import 'package:satu_digital/model/product_model.dart';
-// import 'package:satu_digital/view/product/product_edit_screen.dart';
 import 'package:satu_digital/utils/format.dart';
 import 'package:satu_digital/view/product/product_add_screen.dart';
 import 'package:satu_digital/view/product/product_detail_screen.dart';
 
 class ProductListScreen extends StatefulWidget {
   final int? currentUserId;
-  final String? currentUserRole; // "admin" or "user"
+  final String? currentUserRole;
   const ProductListScreen({
     super.key,
     this.currentUserId,

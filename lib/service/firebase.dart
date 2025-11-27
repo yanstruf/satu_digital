@@ -29,7 +29,7 @@ class FirebaseService {
       email: email,
       noHp: noHp,
       kota: kota,
-      role: "user", // penting
+      role: "user",
       createdAt: now,
       updatedAt: now,
     );
@@ -69,7 +69,7 @@ class FirebaseService {
 
   static Future<void> deleteUser(String uid) async {
     await firestore.collection('users').doc(uid).delete();
-    // delete auth user (must be currently signed-in user)
+
     if (auth.currentUser != null && auth.currentUser!.uid == uid) {
       await auth.currentUser!.delete();
     }
